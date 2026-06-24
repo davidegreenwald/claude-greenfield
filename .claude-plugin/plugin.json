@@ -1,0 +1,23 @@
+{
+  "name": "greenfield",
+  "displayName": "Greenfield",
+  "version": "1.0.0",
+  "description": "Build and customize a production-ready agent workflow from scratch, or audit and upgrade your existing projects.",
+  "author": {
+    "name": "David Greenwald",
+    "url": "https://github.com/davidegreenwald"
+  },
+  "homepage": "https://github.com/davidegreenwald/claude-greenfield",
+  "repository": "https://github.com/davidegreenwald/claude-greenfield",
+  "license": "MIT",
+  "keywords": [
+    "agentic",
+    "scaffolding",
+    "workflow",
+    "guardrails",
+    "code-quality",
+    "planning",
+    "audit",
+    "project-setup"
+  ]
+}

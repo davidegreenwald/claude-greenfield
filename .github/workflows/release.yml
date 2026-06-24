@@ -1,0 +1,32 @@
+name: Release
+
+# Validates the plugin manifest, and on a release tag publishes a GitHub Release.
+# Release flow: bump version in .claude-plugin/plugin.json, commit, then run
+#   claude plugin tag --push
+# locally to create and push the greenfield--v<version> tag, which triggers this.
+
+on:
+  push:
+    tags:
+      - "greenfield--v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate plugin manifest
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate --strict .
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --generate-notes

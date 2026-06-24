@@ -65,35 +65,35 @@ Here's an example /work pipeline Greenfield can generate—trim, re-order, or ad
 
 ```mermaid
 flowchart TD
-    A(["Pick next ticket"]) --> P0["Phase 0 · Branch / worktree<br/>(orchestrator)"]
-    P0 --> P1["Phase 1 · Plan and prep<br/>(orchestrator)"]
-    P1 --> RES
     subgraph RES["Research · parallel"]
         direction LR
         R1["Explore"]
         R2["Explore"]
         R3["general-purpose"]
     end
-    RES --> GATE1["Phase 1 · Completeness gate<br/>(ticket-planner)"]
-    GATE1 --> PRE
     subgraph PRE["Phase 2 · Pre-execution review · parallel"]
         direction LR
         FC["fact-checker"]
         AR["architecture-reviewer"]
     end
-    PRE --> P3["Phase 3 · Execute, tests first<br/>(orchestrator)"]
-    P3 --> P4["Phase 4 · Self-check<br/>(orchestrator)"]
-    P4 --> P5["Phase 5 · Mechanical gate<br/>(pre-commit hook)"]
-    P5 --> POST
     subgraph POST["Phase 6 · Post-implementation review · parallel"]
         direction LR
         CR["correctness-reviewer"]
         PA["patterns-auditor"]
     end
-    POST --> P7["Phase 7 · Close-out<br/>(orchestrator)"]
+    A(["Pick next ticket"]) --> P0["Phase 0 · Branch / worktree<br/>(orchestrator)"]
+    P0 --> P1["Phase 1 · Plan and prep<br/>(orchestrator)"]
+    P1 --> R1 & R2 & R3
+    R1 & R2 & R3 --> GATE1["Phase 1 · Completeness gate<br/>(ticket-planner)"]
+    GATE1 --> FC & AR
+    FC & AR --> P3["Phase 3 · Execute, tests first<br/>(orchestrator)"]
+    P3 --> P4["Phase 4 · Self-check<br/>(orchestrator)"]
+    P4 --> P5["Phase 5 · Mechanical gate<br/>(pre-commit hook)"]
+    P5 --> CR & PA
+    CR & PA --> P7["Phase 7 · Close-out<br/>(orchestrator)"]
     P7 --> P8["Phase 8 · Integrate · ff-merge or PR<br/>(orchestrator + pm-explainer)"]
     P8 --> P9["Phase 9 · Retrospective<br/>(orchestrator)"]
-    P9 --> P10["Phase 10 · Next ticket<br/>(orchestrator)"]
+    P9 --> P10["Phase 10 · Recommend next ticket<br/>(orchestrator)"]
     P10 -->|loop| A
 ```
 

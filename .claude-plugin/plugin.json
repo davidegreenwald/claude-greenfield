@@ -1,7 +1,7 @@
 {
   "name": "greenfield",
   "displayName": "Greenfield",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Build and customize a production-ready agent workflow from scratch, or audit and upgrade your existing projects.",
   "author": {
     "name": "David Greenwald",

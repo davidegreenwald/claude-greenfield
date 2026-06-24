@@ -112,6 +112,13 @@ auto-merge on green, retrospective + next-ticket phases, path-scoped rules, per-
 CLAUDE.md. These are the strongest forms of each factor; scale them down for a small project
 by reducing sizing (fewer ADRs, a trimmed roster), never by dropping a factor.
 
+Add one cadence the per-ticket loop does not cover: a **phase-gate audit**. At the end of each
+roadmap phase — not each ticket — seed a ticket that runs a deep, multi-agent audit (an
+"ultracode" pass: many reviewer subagents fanned out in parallel) across architecture, code
+correctness, security, and performance. The per-ticket gate and reviewers each see one diff at a
+time, so cross-cutting drift slips through; the phase boundary is the cheapest place to catch it
+before it compounds. Fold the audit's findings back in as the next phase's tickets.
+
 ## Process
 
 Run these steps. Load supplements as each step needs them.

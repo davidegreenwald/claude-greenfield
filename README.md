@@ -6,7 +6,9 @@ Greenfield doesn't ship you a set of out-of-the-box agents and skills. Run `/gre
 
 Point it at an empty directory to scaffold a new project (**init**), or at an existing repo to review it against the harness and install only what's missing (**audit**).
 
-Greenfield is principles-first. It encodes the 13 factors that decide whether an agentic coding project succeeds — decision-complete tickets, a fast deterministic gate, executable architecture, independent review, externalized memory, and so on — and installs a concrete artifact for each. The form of each artifact (the exact ticket fields, gate command, reviewer roster) is decided by you.
+Greenfield is intended for serious engineering that scales as your project goes from MVP to thousands of lines. It's built on a foundation of locking things in from the beginning: scale—decision-complete tickets, a fast deterministic gate, executable architecture, independent review, externalized memory, and so on. Each factor gets a concrete artifact ready for agentic use, and the skill will help you make lasting architecture decisions up front.
+
+Once it's in place, your workflow is one command.
 
 ## Installation
 
@@ -28,8 +30,6 @@ Reload so Claude registers the skill:
 Claude Code with plugin support. The `displayName` field in the manifest uses a feature added in Claude Code 2.1.143, so older versions show the plugin under its raw name instead — the skill itself works regardless.
 
 ## What it does
-
-Greenfield secures all 13 success factors with concrete artifacts:
 
 - **Decision-complete tickets** — every decision resolved before code is written, no "TBD".
 - **A fast hook-enforced quality gate** — one `verify` command (lint + types + tests + architecture) is the Definition of Done, run at commit time.
@@ -55,9 +55,47 @@ It opens with a short summary, asks **init** or **audit**, then runs the intervi
 
 ## Working on your project
 
-After Greenfield's work is done, you'll drive your project from the `/work` command, which will trigger the workflow you've just created for each ticket. When each ticket is done, it will point you to the next one.
+After Greenfield's work is done, you'll drive your project with Claude Code from the `/work` skill, which will trigger the workflow you've just created to plan and execute the next ticket. When that work is done, you'll be pointed to the next one.
 
-There's no further need for the skill. You can work with Claude directly in your project to make changes as your project grows—add a "staff engineer" sub-agent for architecture help, drop a workflow step you don't need, or research the next round of tickets. Claude will have all of the context it needs.
+There's no further need for Greenfield after the initial set-up or audit. You can work with Claude directly in your project to make changes as your project grows—add a "staff engineer" sub-agent for architecture help, drop a workflow step you don't need, or research the next round of tickets. Claude will have all of the context it needs.
+
+### The `/work` pipeline
+
+Here's an example /work pipeline Greenfield can generate—trim, re-order, or add to fit your project.
+
+```mermaid
+flowchart TD
+    A(["Pick next ticket"]) --> P0["Phase 0 · Branch / worktree<br/>(orchestrator)"]
+    P0 --> P1["Phase 1 · Plan and prep<br/>(orchestrator)"]
+    P1 --> RES
+    subgraph RES["Research · parallel"]
+        direction LR
+        R1["Explore"]
+        R2["Explore"]
+        R3["general-purpose"]
+    end
+    RES --> GATE1["Phase 1 · Completeness gate<br/>(ticket-planner)"]
+    GATE1 --> PRE
+    subgraph PRE["Phase 2 · Pre-execution review · parallel"]
+        direction LR
+        FC["fact-checker"]
+        AR["architecture-reviewer"]
+    end
+    PRE --> P3["Phase 3 · Execute, tests first<br/>(orchestrator)"]
+    P3 --> P4["Phase 4 · Self-check<br/>(orchestrator)"]
+    P4 --> P5["Phase 5 · Mechanical gate<br/>(pre-commit hook)"]
+    P5 --> POST
+    subgraph POST["Phase 6 · Post-implementation review · parallel"]
+        direction LR
+        CR["correctness-reviewer"]
+        PA["patterns-auditor"]
+    end
+    POST --> P7["Phase 7 · Close-out<br/>(orchestrator)"]
+    P7 --> P8["Phase 8 · Integrate · ff-merge or PR<br/>(orchestrator + pm-explainer)"]
+    P8 --> P9["Phase 9 · Retrospective<br/>(orchestrator)"]
+    P9 --> P10["Phase 10 · Next ticket<br/>(orchestrator)"]
+    P10 -->|loop| A
+```
 
 ## What's inside
 

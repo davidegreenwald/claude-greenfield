@@ -1,8 +1,8 @@
 {
   "name": "greenfield",
   "displayName": "Greenfield",
-  "version": "1.1.0",
-  "description": "Build and customize a production-ready agent workflow from scratch, or audit and upgrade your existing projects.",
+  "version": "2.0.0",
+  "description": "Build and customize a production-ready agent workflow from scratch, or audit and upgrade an existing repo — decision-complete tickets with success criteria bound to red oracles, a hook-enforced gate, a definition of done and of a bug, adversarial review that executes, and runtime proof against the real system.",
   "author": {
     "name": "David Greenwald",
     "url": "https://github.com/davidegreenwald"

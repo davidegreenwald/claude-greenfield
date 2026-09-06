@@ -38,8 +38,11 @@ otherwise.
 | Architecture | the named style + the one boundary to enforce, each with sources | the researched recommendation; confirm or override |
 | Gate | the single `verify` command | reuse existing script; else compose from stack |
 | Git posture | local-only vs remote/PR | infer from `git remote`; local → worktree+ff-only |
-| Reviewer roster | which lenses + model tiers | the 6-archetype set in `./exemplars/agent-roster.md`, trimmed to the project |
-| Rules | which path-scoped rules to seed | always-on (shell, evidence) + one per boundary |
+| Reviewer roster | which lenses + model tiers | the archetype set in `./exemplars/agent-roster.md`, trimmed to the project |
+| Rules | which path-scoped rules to seed | the five always-on rules (`./exemplars/rules.md`) + one per boundary |
+| Continuation | defect-intake form + test-strength tool + the runtime harness (factors 15, 14, 16) | `Bug` type if the project will accrue users/bugs, else a defect section; mutation tool per stack, run as a separate step; name the real system and its driver, and whether the harness is built now or deferred to the first behavioral ticket (recorded in `adr-002`) |
+| Performance (factor 17) | the perf-sensitive surface + its benchmark + threshold, or a justified N/A | name the surface (render / query / hot path / memory); pick the stack's benchmark tool (`./ecosystem-profiles.md`) as a separate step; N/A only if there is genuinely no perf surface |
+| Context scoping | the CLAUDE.md / `/work`-skill / agent / rule split; which skills each subagent lists; repo-scoped vs global deps | durable standards → CLAUDE.md; orchestrator-only → `/work` skill; task-specific → agent or rule; vendor any global dep the workflow needs |
 | Scale knobs | phases/roadmap? design track? per-module CLAUDE.md? | size to module count; all factors still present |
 
 ## Question groupings (adapt wording)
@@ -81,8 +84,8 @@ batches after research has produced the candidates.
 
 **Batch D — reviewer roster + tiers**
 - Which reviewers, from the archetype library (`./exemplars/agent-roster.md`): always include
-  a decision-completeness checker, a correctness reviewer, and a pattern/consistency auditor;
-  add a citations/fact-checker if the project makes external claims, a product-lens explainer
+  a decision-completeness checker, a `ticket-adversary` (runs on every Component and Bug), a
+  correctness reviewer that executes, and a pattern/consistency auditor; add a citations/fact-checker if the project makes external claims, a product-lens explainer
   for user-facing work, and domain reviewers (security, perf, a11y, API-compat) as the domain
   demands.
 - Model tiers: judgment reviewers (architecture, correctness) on the strongest available tier;
@@ -92,14 +95,48 @@ batches after research has produced the candidates.
 - Phase roadmap / `PLAN.md`? (large multi-phase build → yes; single-purpose tool → no)
 - Non-shipping design/prototype track? (UI-bearing product → maybe)
 - Per-module CLAUDE.md? (many modules → yes; flat small repo → no)
+- Global-skill/agent dependency? Does the workflow lean on any skill or agent that lives only in
+  a personal `~/.claude/` (e.g. a global `ios-dev` or `python-cli` skill)? Because a subagent
+  discovers global skills but a teammate or CI without them behaves differently, default to
+  **vendoring** what the `/work` pipeline needs into `.claude/skills` / `.claude/agents`, or
+  declaring it as a required dependency. (Feeds the context-scoping sub-audit, checklist 10c.)
+  The generated `/work` skill carries the repo's own git instruction; never rely on a global git skill.
+
+**Batch F — continuation discipline** (factors 14, 15, 16; size to project maturity)
+- Defect intake (factor 15): a distinct `Bug` ticket type `(recommended)` for a project that will
+  accrue users and bugs, or a lightweight defect section on the generic ticket for a throwaway/solo
+  build. Either form forces the three fields — named consequence, reproduction, and a red-first
+  regression test.
+- Test-strength (factor 14): confirm the stack's mutation runner (see `./ecosystem-profiles.md`;
+  revert-check convention where none exists) and whether it runs pre-merge or scheduled — never in
+  the fast commit gate. A break threshold is the mature form; a revert-check convention the throwaway one.
+- Runtime proof (factor 16): "What is the real system a behavioral claim will be driven against, and what
+  drives it?" Options from `./ecosystem-profiles.md` § Runtime harness drivers (a real browser against a
+  running server; the built binary in a temp dir; the app in a simulator; the host over its debug port /
+  add-on API; a scripted runbook as the fallback). Then: "Which operations are irreversible or destructive
+  (a wipe, a delete, an external write)?" — these seed the harness's interlocks and the ticket's
+  `Irreversible sink` row. Finally: build the harness now `(recommended when the first ticket is already a
+  behavioral one)` or defer to the first ticket whose claim needs it (recorded in `adr-002` with the
+  runbook fallback named). The evidence rule installs either way.
+
+**Batch G — performance measure** (factor 17; present-when-applicable)
+- Perf-sensitive surface: "What is this project's performance-sensitive surface — a rendered page,
+  a database query, a hot compute path, memory footprint — or none?" If the honest answer is none,
+  record a justified N/A in `adr-001` and skip the rest. Ask this as AskUserQuestion with the
+  likely surfaces for the stack as options plus "None (record N/A)".
+- Benchmark + threshold: for the named surface, confirm the stack's benchmark tool
+  (`./ecosystem-profiles.md`) and a threshold or baseline that fails the build on regression, run
+  as a *separate* pre-merge/scheduled step (never the fast gate). Note the profiler for triage
+  (documented, on-demand — not a CI step).
 
 ## Output of the interview
 
 A filled decision sheet — every domain resolved, no "TBD" — ready to drive generation. Restate
 it back in a compact block (stack, gate, posture, architecture style + sources, boundary,
-roster+tiers, rules), then emit the would-generate manifest (the files and their one-line
-purpose) and get a go-ahead before writing. Declining the manifest writes nothing — that is the
-no-write preview.
+roster+tiers, rules, defect-intake form, test-strength tool, the real system + its driver and
+whether the harness is built now or deferred, performance surface + benchmark or N/A), then emit
+the would-generate manifest (the files and their one-line purpose) and get a go-ahead before
+writing. Declining the manifest writes nothing — that is the no-write preview.
 
 ## Audit specifics
 

@@ -12,9 +12,9 @@ closed item's row is **removed** — the registry stays short and shows only wha
 
 Open work only. When a ticket closes, remove its row — the ticket file is the record.
 
-| ID | Title | Status | Phase | Ticket |
-|----|-------|--------|-------|--------|
-| T-001 | <title> | Not started | 1 | [ticket](tickets/T-001-slug.md) |
+| ID | Title | Type | Status | Phase | Ticket |
+|----|-------|------|--------|-------|--------|
+| T-001 | <title> | Component | Not started | 1 | [ticket](tickets/T-001-slug.md) |
 ```
 
 The `T-001` row above is **illustrative of the format**, not seeded by init. Init writes this
@@ -23,6 +23,12 @@ ticket; T-001 is authored later, in `/work` Phase 1, when the user starts that w
 
 Optional: group rows under phase headings (`## Phase 2 — <name>`) for a multi-phase project;
 a small project keeps one flat table.
+
+## Type column (factor 15)
+
+`Small change` · `Component` · `Bug`. The column exists so open defects are visible at a glance and so
+`/work` Phase 1 can branch on the shape without opening the ticket; a `Bug` row is not `In progress`
+until its red regression test exists (the defect rule).
 
 ## Status vocabulary
 
@@ -48,3 +54,12 @@ Use exactly these (add `Post-launch` only if the project ships and defers):
 Create ticket from template → register row (`Not started`) → `/work` advances Status →
 on close, fill the ticket Outcome and **remove the row** on the ticket branch so the merge
 carries the closure. Never edit the registry as a post-merge commit on main.
+
+## The closure invariant (filled Outcome ⟺ no row)
+
+**Closure is structural, not a status token.** A ticket is closed by exactly two edits that happen
+**together** — the `## Outcome` is filled *and* the registry row is removed. The two states never coexist:
+a filled Outcome reads "done"; a live row reads "open work." There is **no `done`/`closed` terminal value**
+in the Status vocabulary above and **no terminal `Stage`** — a closed ticket has *no row at all*, and its
+ticket file is the permanent record. A live row pointing at a ticket whose Outcome is already filled is
+drift; fix it at close-out (`/work` Phase 7), never by adding a terminal status.
